@@ -6,14 +6,17 @@ verify_ssl = true
 [dev-packages]
 flake8 = "*"
 black = "*"
+pylint = "*"
 
 [packages]
 django = "*"
 pillow = "*"
 django-seed = "*"
+djangorestframework = "*"
+pylint-django = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
 
 [pipenv]
 allow_prereleases = true

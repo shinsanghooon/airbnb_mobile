@@ -5,7 +5,6 @@ from django_seed import Seed
 from users.models import User
 from rooms.models import Room, Photo
 
-
 class Command(BaseCommand):
 
     help = "It seeds the DB with tons of stuff"
