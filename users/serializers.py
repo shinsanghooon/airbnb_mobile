@@ -28,18 +28,33 @@ class ReadUserSerializer(serializers.ModelSerializer):
             "date_joined",
         )
 
-class WriteUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     # ModelSerializer를 쓰면 Room Serializer에서 했던 것처럼 다 안해도됨
     # view는 custome이 필요한 경우가 많지만 serializer에서는 자동이 좋음
+    
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = [
+            "id",
             "username", 
             "first_name", 
             "last_name", 
-            "email"
+            "email",
+            "avatar",
+            "superhost",
+            "password"
         ]
+        read_only_fields = ["id", "superhost", "avatar"]
 
     def validate_frist_name(self, value):
         print(value)
         return value.upper()
+
+    def create(self, validated_data):
+        password = validated_data.get("password")
+        user = super().create(validated_data)
+        user.set_password(password)
+        user.save()
+        return user
