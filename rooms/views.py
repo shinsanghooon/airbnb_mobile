@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from .models import Room
-from .serializers import ReadRoomSerializer, WriteRoomSerializer
+from .serializers import RoomSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -29,17 +29,17 @@ from rest_framework import status
 class RoomsView(APIView):
     def get(self, request):
         rooms = Room.objects.all()[:5]
-        serializer = ReadRoomSerializer(rooms, many=True).data
+        serializer = RoomSerializer(rooms, many=True).data
         return Response(serializer)
 
     def post(self, request):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        serializer = WriteRoomSerializer(data=request.data)
+        serializer = RoomSerializer(data=request.data)
         print(dir(serializer)) # serializer의 메소드 확인 가능
         if serializer.is_valid():  # -> false, 내가 전송한 데이터로는 serializers가 invalid 
             room = serializer.save(user=request.user)
-            room_serializer = ReadRoomSerializer(room).data
+            room_serializer = RoomSerializer(room).data
             # serializer -> create, update를 직접 콜하면 안되고 항상 save메소드를 콜해야해 
             # save 메소드가 -> create, update를 할 지 
             return Response(data=room_serializer, status=status.HTTP_200_OK)
@@ -59,7 +59,7 @@ class RoomView(APIView):
     def get(self, request, pk):
         room = self.get_room(pk)
         if room is not None:
-            serializer = ReadRoomSerializer(room).data
+            serializer = RoomSerializer(room).data
             return Response(serializer)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)        
@@ -70,13 +70,13 @@ class RoomView(APIView):
         if room is not None:
             if room.user != request.user:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-            serializer = WriteRoomSerializer(room, data=request.data, partial=True)
+            serializer = RoomSerializer(room, data=request.data, partial=True)
             # serializer가 인스턴스를 가지고 초기화되면 update 
             # 인스턴스가 없는 상태로 초기화되면 create
             # partial=True는 바꾸고 싶은 데이터만 보내는 것이다. 
             if serializer.is_valid():
                 room = serializer.save()
-                return Response(ReadRoomSerializer(room).data, status=status.HTTP_200_OK)
+                return Response(RoomSerializer(room).data, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:

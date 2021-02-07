@@ -5,6 +5,7 @@ app_name = "users"
 
 urlpatterns = [
     path("me/", views.MeView.as_view()),
+    path("me/fav/", views.MeView.as_view()),
     path("<int:pk>/", views.user_detail),
 
 ]

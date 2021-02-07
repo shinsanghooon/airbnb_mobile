@@ -3,20 +3,16 @@ from rest_framework import serializers
 from users.serializers import RelatedUserSerializer
 from .models import Room
 
-
-class ReadRoomSerializer(serializers.ModelSerializer):
+class RoomSerializer(serializers.ModelSerializer):
 
     user = RelatedUserSerializer()
+    
+
     class Meta:
         model = Room
         exclude = ["modified",]
-
-
-class WriteRoomSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Room
-        exclude = ["user", "modified", "created"]
+        # room을 get하거나 update할 때 user를 validate 하지 말라고 알려줘야함.
+        read_only_fields = ["user", "id", "created", "updated"]
 
     def validate(self, data):
         if self.instance: # update 
