@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.conf import settings
 from rest_framework import authentication
 from rest_framework import exceptions
@@ -25,3 +24,5 @@ class JWTAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed(detail="JWT Format Invalid")
         except User.DoesNotExist:
             raise exceptions.AuthenticationFailed("No Such User")
+
+

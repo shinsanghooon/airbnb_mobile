@@ -89,3 +89,10 @@ def login(request):
         return Response(data={"token": encoded_jwt})
     else:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+# 로그인 할 때 username, password 맞을 때는 JWT를 encode한다. 
+# 토큰에는 pk만 들어있다. 헤더에 있는 토큰을 이용해 인증을 할 수 있음 
+# HTTP_AUTHORUZATION 값을 받아온다. 토큰을 헤더로부터 받아서 
+# 토큰으 파트를 split 한다. 두번째 파트가 실제 토큰이고 
+# 토큰을 decode하는데 decode 과정을 통해서 pk를 알 수 있고 user를 return 해준다.
