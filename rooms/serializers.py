@@ -1,12 +1,13 @@
-
+from django.utils.timezone import now
 from rest_framework import serializers
 from users.serializers import RelatedUserSerializer
 from .models import Room
 
 class RoomSerializer(serializers.ModelSerializer):
 
-    user = RelatedUserSerializer()
+    user = RelatedUserSerializer(read_only=True)
     is_fav = serializers.SerializerMethodField()
+    # years_since_joined = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
@@ -26,13 +27,20 @@ class RoomSerializer(serializers.ModelSerializer):
     
     def get_is_fav(self, obj):
         request = self.context.get("request")
-        print(request.user)
+        # print(request.user)
         if request:
             user = request.user
             if user.is_authenticated:
                 return obj in user.favs.all()
         return False
     
+    def create(self, validated_data):
+        request = self.context.get('request')
+        room = Room.objects.create(**validated_data, user=request.user)
+        return room
+
+    # def get_years_since_joined(self, obj):
+    #     return round((now() - obj.created).days/365,1)
 
     # 유저들이 전송할 수 있는 것들 
     # name = serializers.CharField(max_length=140)
